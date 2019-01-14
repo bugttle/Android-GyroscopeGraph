@@ -1,2 +1,4 @@
 # Android-GyroscopeGraph
-Android Gyroscope Graph
+Android Gyroscope graph sample.
+
+![Screen shot](docs/images/screenshot.png)
