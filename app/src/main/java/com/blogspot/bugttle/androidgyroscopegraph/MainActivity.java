@@ -1,10 +1,14 @@
 package com.blogspot.bugttle.androidgyroscopegraph;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -36,23 +40,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mChart = findViewById(R.id.chart);
 
         mChart.setData(new LineData());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         if (mGyro != null) {
             mSensorManager.registerListener(this, mGyro, SensorManager.SENSOR_DELAY_UI);
         } else {
             mTextView.setText("Not Supported");
         }
+
+        // REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Don't stop
+        //if (mGyro != null) {
+        //    mSensorManager.registerListener(this, mGyro, SensorManager.SENSOR_DELAY_UI);
+        //} else {
+        //    mTextView.setText("Not Supported");
+        //}
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mSensorManager.unregisterListener(this);
+        // Keep to listen sensors
+        //mSensorManager.unregisterListener(this);
     }
 
     @Override
